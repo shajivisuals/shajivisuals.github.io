@@ -73,11 +73,20 @@ select{background:rgba(255,255,255,.05);border:1px solid var(--hair);border-radi
 .info{margin:18px 0 0}form{margin-top:28px}
 footer{justify-content:center;align-items:center}
 @media(max-width:700px){.hero{min-height:74vh}.pin{text-align:left}}
+.gbar{margin-top:64px;padding:16px 22px;border-radius:14px;background:linear-gradient(96deg,var(--flame),var(--lit));text-align:center}
+.gbar h3{font-size:clamp(1.1rem,2.2vw,1.6rem);line-height:1.2}
+.glogo{height:60px;width:auto;margin:26px auto 22px;background:#fff;padding:8px 16px;border-radius:12px}
+.gal{--gh:380px;margin-top:0}.gal .track{animation-timing-function:linear}
+.gal .track img{height:var(--gh);width:auto;margin:0 12px;padding:0;background:none;border-radius:16px;cursor:zoom-in;flex:none;border:1px solid var(--hair)}
+.lb{position:fixed;inset:0;z-index:50;background:rgba(3,4,10,.93);display:grid;place-items:center;padding:20px;cursor:zoom-out}.lb[hidden]{display:none}
+.lb img{max-height:92vh;max-width:92vw;border-radius:14px}
+@media(max-width:700px){.gal{--gh:300px}}
 </style></head><body>
 <div class="glow" id="glow"></div>
 <nav class="top"><a class="brand" href="#/"><img src="https://static.wixstatic.com/media/6ce1f0_11eb3e34fe8b4edb9cf1167f8c495720~mv2.png/v1/fill/w_82,h_82,al_c,q_85/Pinterest%20logo.png" alt="Shaji visuals logo"><span>Shaji visuals<small>Marketing &amp; Branding</small></span></a>
 <div class="pill" id="pill"></div><div style="display:flex;gap:10px"><a class="btn" href="#/contact-us">Contact Us</a><button class="burger" id="burger" aria-label="Open menu" aria-expanded="false">☰</button></div></nav>
 <div class="sheet" id="sheet"></div>
+<div class="lb" id="lb" hidden><img alt=""></div>
 <main>
 <section class="page" data-p="">
 <div class="hero"><p class="eyebrow">Marketing &amp; Branding</p><h1>Shaji <em>visuals</em></h1>
@@ -103,9 +112,7 @@ footer{justify-content:center;align-items:center}
 
 <section class="page" data-p="portfolio"><p class="eyebrow">Graphic Design page</p><h1>My <em>Designs</em></h1>
 <p class="lede">A collection of social media posts, posters, and brand creatives I've designed from sports and festive content to movie posters and product branding.</p>
-<div class="work"><div class="card reveal"><h3>SvDealsStore | Social Media Design</h3><img src="https://static.wixstatic.com/media/6ce1f0_f1e9940bb9f14c119d92dc5575498d46~mv2.jpg/v1/fill/w_270,h_82,al_c,q_80/6ce1f0_f1e9940bb9f14c119d92dc5575498d46~mv2.jpg" alt="SvDealsStore"></div>
-<div class="card reveal"><h3>Pink Salt Wall | Social Media Design</h3><img src="https://static.wixstatic.com/media/6ce1f0_5789e871335a42b1a827a8050b56efc7~mv2.avif/v1/fill/w_302,h_50,al_c,q_80/6ce1f0_5789e871335a42b1a827a8050b56efc7~mv2.avif" alt="Pink Salt Wall"></div>
-<div class="card reveal"><h3>Sports, Movies &amp; Ad Poster</h3></div></div></section>
+<div id="gal"></div></section>
 
 <section class="page" data-p="copy-of-portfolio"><p class="eyebrow">Pinterest &amp; Meta Ads page</p><h1>OUR <em>work</em></h1>
 <p class="lede">I create organic social media content built to grow accounts and drive real engagement, along with Meta ads focused on sales, leads, and brand awareness. I also work with Pinterest growing accounts organically through pin design and SEO, plus running Pinterest ads to drive direct sales. Whether organic or paid, my goal is the same: turn visuals into real, measurable results.</p>
@@ -168,6 +175,12 @@ const logos=['https://static.wixstatic.com/media/6ce1f0_f1e9940bb9f14c119d92dc55
 const grp=(h)=>Array(3).fill(logos).flat().map(u=>`<img src="${u}" alt="${h?'':'Client logo'}" ${h?'aria-hidden="true"':''}>`).join('');
 $('#track').innerHTML=grp(0)+grp(1);
 
+const G=[{"t":"SvDealsStore | Social Media Design","logo":"https://static.wixstatic.com/media/6ce1f0_f1e9940bb9f14c119d92dc5575498d46~mv2.jpg/v1/fill/w_298,h_76,al_c,q_80/Pinterest%20logo.jpg","dir":1,"f":[["sv01",608,760],["sv02",608,760],["sv03",608,760],["sv04",608,760],["sv05",608,760],["sv06",608,760]]},{"t":"Pink Salt Wall | Social Media Design","logo":"https://static.wixstatic.com/media/6ce1f0_5789e871335a42b1a827a8050b56efc7~mv2.avif/v1/fill/w_384,h_56,al_c,q_80/Webp_Logo_1_220x_2x.avif","dir":0,"f":[["pk01",608,760],["pk02",608,760],["pk03",608,760],["pk04",608,760],["pk05",608,760],["pk06",608,760],["pk07",608,760],["pk08",608,760],["pk09",608,760]]},{"t":"Sports, Movies & Ad Poster","logo":"","dir":1,"f":[["sp01",608,760],["sp02",760,760],["sp03",608,760],["sp04",608,760],["sp05",760,760],["sp06",608,760],["sp07",602,760],["sp08",760,760],["sp09",608,760],["sp10",760,760],["sp11",760,760],["sp12",594,760],["sp13",760,760]]}];
+(function(){const H=380,tag=(x,c)=>`<img src="images/${x[0]}.jpg" style="aspect-ratio:${x[1]}/${x[2]}" alt="Design by Shaji visuals"${c?' aria-hidden="true"':''}>`;
+$('#gal').innerHTML=G.map(g=>{const sum=g.f.reduce((t,x)=>t+H*x[1]/x[2]+24,0),reps=Math.max(1,Math.ceil(1800/sum)),one=Array(reps).fill(g.f).flat();
+return `<div class="reveal"><div class="gbar"><h3>${g.t.replace(/&/g,'&amp;')}</h3></div>${g.logo?`<img class="glogo" src="${g.logo}" alt="">`:'<div style="height:26px"></div>'}<div class="marquee gal"><div class="track" style="animation-duration:${Math.round(sum*reps/55)}s;animation-direction:${g.dir?'normal':'reverse'}">${one.map(x=>tag(x,0)).join('')}${one.map(x=>tag(x,1)).join('')}</div></div></div>`}).join('');
+const lb=$('#lb');$('#gal').addEventListener('click',e=>{if(e.target.tagName==='IMG'&&e.target.closest('.gal')){lb.querySelector('img').src=e.target.src;lb.hidden=false}});
+lb.onclick=()=>lb.hidden=true;addEventListener('keydown',e=>{if(e.key==='Escape')lb.hidden=true})})();
 
 const REVIEWS_API='https://script.google.com/macros/s/AKfycbx--8i3Uf-zf4rxPru9Zz59QnpYaFHbryBi8Qrl_YCnWYk-vk-51NaaHWxATsk_XvoG/exec'; /* paste your Google Apps Script Web App URL here */
 async function loadReviews(){if(!REVIEWS_API)return;try{const a=await(await fetch(REVIEWS_API)).json();if(!Array.isArray(a)||!a.length)return;
