@@ -299,6 +299,13 @@ html{scroll-padding-top:100px}
 .starpick button.on{color:#f5b301;text-shadow:0 0 14px rgba(245,179,1,.45)}
 .starpick button:hover{transform:scale(1.15)}.starpick button:focus-visible{outline:2px solid #8fb0ff;outline-offset:2px;border-radius:6px}
 .article h3{font-size:1.35rem;margin:26px 0 8px;line-height:1.1}
+/* smaller About us heading */
+.page[data-p="about-us"]>h1{font-size:clamp(2.2rem,6.4vw,5.6rem)}
+/* review marquee: JS-driven so it auto-moves and can also be dragged */
+#revTrack{animation:none!important;will-change:transform}
+#revWrap .marquee{cursor:grab;touch-action:pan-y;user-select:none;-webkit-user-select:none}
+#revWrap .marquee.drag{cursor:grabbing}
+.starpick button:not(.on):hover{color:rgba(255,255,255,.4)}
 </style>
 <!-- Google Analytics 4 (page views are sent manually because the site uses #/ routes) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-FKJTXC2S5R"></script>
@@ -478,7 +485,7 @@ html{scroll-padding-top:100px}
 
 <section class="page" data-p="client-review-submit"><h1>Client <em>review</em></h1>
 <form id="revForm"><label>Name*<input name="Name" required></label>
-<div class="ratefield"><span class="rl" id="rateLbl">Rating*</span><div class="starpick" id="starPick" role="radiogroup" aria-labelledby="rateLbl"><input type="hidden" name="Rating" value="5"><button type="button" role="radio" aria-checked="false" aria-label="1 star" data-v="1">★</button><button type="button" role="radio" aria-checked="false" aria-label="2 stars" data-v="2">★</button><button type="button" role="radio" aria-checked="false" aria-label="3 stars" data-v="3">★</button><button type="button" role="radio" aria-checked="false" aria-label="4 stars" data-v="4">★</button><button type="button" role="radio" aria-checked="true" aria-label="5 stars" data-v="5">★</button></div></div>
+<div class="ratefield"><span class="rl" id="rateLbl">Rating*</span><div class="starpick" id="starPick" role="radiogroup" aria-labelledby="rateLbl"><input type="hidden" name="Rating" value=""><button type="button" role="radio" aria-checked="false" aria-label="1 star" data-v="1">★</button><button type="button" role="radio" aria-checked="false" aria-label="2 stars" data-v="2">★</button><button type="button" role="radio" aria-checked="false" aria-label="3 stars" data-v="3">★</button><button type="button" role="radio" aria-checked="false" aria-label="4 stars" data-v="4">★</button><button type="button" role="radio" aria-checked="false" aria-label="5 stars" data-v="5">★</button></div></div>
 <label>Your review*<textarea name="Review" rows="6" required maxlength="800"></textarea></label>
 <label style="position:absolute;left:-9999px" aria-hidden="true">Website<input name="website" tabindex="-1" autocomplete="off"></label>
 <button class="btn flame" type="submit">Submit</button><p id="revMsg" class="info" role="status"></p></form></section>
@@ -509,7 +516,7 @@ addEventListener('scroll',()=>{const p=scrollY/Math.max(1,document.body.scrollHe
 $$('form[data-mail]').forEach(f=>f.onsubmit=e=>{e.preventDefault();const d=new FormData(f);const b=[...d].map(([k,v])=>k+': '+v).join('\n');
 location.href='mailto:sharjeelahmad1767@gmail.com?subject='+encodeURIComponent(f.dataset.mail+(d.get('Subject')?' — '+d.get('Subject'):''))+'&body='+encodeURIComponent(b)});
 
-const logos=['https://static.wixstatic.com/media/6ce1f0_f1e9940bb9f14c119d92dc5575498d46~mv2.jpg/v1/fill/w_298,h_76,al_c,q_80/Pinterest%20logo.jpg','https://static.wixstatic.com/media/6ce1f0_5789e871335a42b1a827a8050b56efc7~mv2.avif/v1/fill/w_384,h_56,al_c,q_80/Webp_Logo_1_220x_2x.avif','https://static.wixstatic.com/media/6ce1f0_ffca5c6dc8ae43b48867896ac348a5e2~mv2.png/v1/fill/w_333,h_85,al_c,q_85/logo-B3tTeZC5.png'];
+const logos=['https://static.wixstatic.com/media/6ce1f0_f1e9940bb9f14c119d92dc5575498d46~mv2.jpg/v1/fill/w_298,h_76,al_c,q_80/Pinterest%20logo.jpg','https://static.wixstatic.com/media/6ce1f0_5789e871335a42b1a827a8050b56efc7~mv2.avif/v1/fill/w_384,h_56,al_c,q_80/Webp_Logo_1_220x_2x.avif','https://static.wixstatic.com/media/6ce1f0_ffca5c6dc8ae43b48867896ac348a5e2~mv2.png/v1/fill/w_333,h_85,al_c,q_85/logo-B3tTeZC5.png','skylite-logo.webp'];
 const grp=(h)=>Array(3).fill(logos).flat().map(u=>`<img src="${u}" alt="${h?'':'Client logo'}" ${h?'aria-hidden="true"':''}>`).join('');
 $('#track').innerHTML=grp(0)+grp(1);
 
@@ -564,13 +571,13 @@ loadReviews();
 /* star rating picker */
 const starBtns=[...document.querySelectorAll('#starPick button')],starIn=document.querySelector('#starPick input');
 function paintStars(n){starBtns.forEach(b=>b.classList.toggle('on',+b.dataset.v<=n))}
-function setRate(n){if(!starIn)return;starIn.value=n;starBtns.forEach(b=>b.setAttribute('aria-checked',+b.dataset.v===n?'true':'false'));paintStars(n)}
-starBtns.forEach(b=>{b.addEventListener('click',()=>setRate(+b.dataset.v));b.addEventListener('mouseenter',()=>paintStars(+b.dataset.v));b.addEventListener('focus',()=>paintStars(+b.dataset.v))});
-const sp=document.getElementById('starPick');if(sp){sp.addEventListener('mouseleave',()=>paintStars(+starIn.value));sp.addEventListener('focusout',()=>paintStars(+starIn.value))}
-setRate(5);
+function setRate(n){if(!starIn)return;starIn.value=n||'';starBtns.forEach(b=>b.setAttribute('aria-checked',+b.dataset.v===n?'true':'false'));paintStars(n)}
+starBtns.forEach(b=>{b.addEventListener('click',()=>setRate(+b.dataset.v));});
+setRate(0);
 $('#revForm').onsubmit=async e=>{e.preventDefault();const f=e.target,d=new FormData(f),m=$('#revMsg');if(d.get('website'))return;
+if(!d.get('Rating')){m.textContent='Please select a star rating.';return}
 if(!REVIEWS_API){m.textContent='Reviews are not connected yet.';return}
-try{await fetch(REVIEWS_API,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain'},body:JSON.stringify({name:d.get('Name'),rating:d.get('Rating'),review:d.get('Review')})});f.reset();setRate(5);m.textContent='Thank you! Your review was submitted and will appear once approved.'}catch(err){m.textContent='Something went wrong. Please try again.'}};
+try{await fetch(REVIEWS_API,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain'},body:JSON.stringify({name:d.get('Name'),rating:d.get('Rating'),review:d.get('Review')})});f.reset();setRate(0);m.textContent='Thank you! Your review was submitted and will appear once approved.'}catch(err){m.textContent='Something went wrong. Please try again.'}};
 
 (function(){const el=$('#cyl');if(!el)return;
 const PICK=['sp12','sv02','sp04','sp01','sp07','pk08'],all=G.flatMap(g=>g.f),items=PICK.map(n=>all.find(x=>x[0]===n)),N=items.length,ring=el.querySelector('.r3'),lb=$('#lb'),reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -691,9 +698,39 @@ document.addEventListener('click',e=>{
 },true);
 document.addEventListener('submit',e=>{
   const f=e.target;
-  if(f.id==='revForm')ev('review_submit',{page_path:pagePath()});
+  if(f.id==='revForm'&&f.elements.Rating&&f.elements.Rating.value)ev('review_submit',{page_path:pagePath()});
   else if(f.hasAttribute('data-mail'))ev('contact_form_submit',{page_path:pagePath()});
 },true);
+})();
+</script>
+<script>
+/* Reviews marquee: auto-moves, pauses on hover, and can be dragged with mouse or touch */
+(function(){
+const wrap=document.getElementById('revWrap');if(!wrap)return;
+const box=wrap.querySelector('.marquee'),tr=document.getElementById('revTrack');
+const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+let x=0,hover=false,drag=false,sx=0,sxx=0,last=performance.now();
+const half=()=>tr.scrollWidth/2;
+const wrapX=()=>{const h=half();if(h>0){x=((x%h)-h)%h}};
+function apply(){tr.style.transform='translate3d('+x+'px,0,0)'}
+box.addEventListener('mouseenter',()=>hover=true);
+box.addEventListener('mouseleave',()=>hover=false);
+box.addEventListener('pointerdown',e=>{if(e.pointerType==='mouse'&&e.button!==0)return;drag=true;sx=e.clientX;sxx=x;box.classList.add('drag');try{box.setPointerCapture(e.pointerId)}catch(_){}});
+box.addEventListener('pointermove',e=>{if(!drag)return;x=sxx+(e.clientX-sx);wrapX();apply()});
+const end=e=>{if(!drag)return;drag=false;box.classList.remove('drag');try{box.releasePointerCapture(e.pointerId)}catch(_){}};
+box.addEventListener('pointerup',end);box.addEventListener('pointercancel',end);
+box.addEventListener('dragstart',e=>e.preventDefault());
+function tick(t){
+  const dt=Math.min(.1,(t-last)/1000);last=t;
+  if(!wrap.hidden&&tr.children.length){
+    if(!drag&&!hover&&!reduce){
+      const dur=parseFloat(tr.style.animationDuration)||40;
+      x-=half()/dur*dt;wrapX();apply();
+    }
+  }
+  requestAnimationFrame(tick);
+}
+requestAnimationFrame(tick);
 })();
 </script>
 </body></html>
