@@ -299,6 +299,14 @@ html{scroll-padding-top:100px}
 .starpick button.on{color:#f5b301;text-shadow:0 0 14px rgba(245,179,1,.45)}
 .starpick button:hover{transform:scale(1.15)}.starpick button:focus-visible{outline:2px solid #8fb0ff;outline-offset:2px;border-radius:6px}
 .article h3{font-size:1.35rem;margin:26px 0 8px;line-height:1.1}
+/* mobile Selected Work: normal scrolling, deck above text, no overlap */
+@media(max-width:879px){
+.sd-pin{height:auto!important;margin-top:0}
+.sd-stick{position:static!important;height:auto!important;display:block}
+.sd{margin-top:34px!important;gap:30px!important}
+.sd-deck{width:min(250px,64vw)!important;touch-action:pan-y}
+.sd-text{padding-bottom:6px}
+}
 /* smaller About us heading */
 .page[data-p="about-us"]>h1{font-size:clamp(2.2rem,6.4vw,5.6rem)}
 .starpick button:not(.on):hover{color:rgba(255,255,255,.4)}
@@ -521,10 +529,10 @@ el.addEventListener('pointerleave',()=>go(0));})();
 (function(){const sd=document.getElementById('sd'),pin=document.getElementById('sdPin');if(!sd||!pin)return;
 const deck=document.getElementById('sdDeck'),cards=[...deck.children],stories=[...sd.querySelectorAll('.sd-story')],n=cards.length,
 num=document.getElementById('sdNum'),ring=document.getElementById('sdRing'),stick=pin.firstElementChild,C=163.36;
-const STEPS=n-1;let t=0,target=0,raf=0,shown=-1;
+const STEPS=n-1;let t=0,target=0,raf=0,shown=-1;const mob=matchMedia('(max-width:879px)');let mi=0,swx=null,swMoved=false;
 const clamp=(v,a,b)=>Math.min(b,Math.max(a,v));
 function range(){return Math.max(1,pin.offsetHeight-stick.offsetHeight)}
-function readTarget(){const r=pin.getBoundingClientRect();const p=clamp(-r.top/range(),0,1);return p}
+function readTarget(){if(mob.matches)return mi/STEPS;const r=pin.getBoundingClientRect();const p=clamp(-r.top/range(),0,1);return p}
 function render(){
  const w=innerWidth;
  cards.forEach((c,i)=>{
@@ -543,12 +551,18 @@ function render(){
 function loop(){t+=(target-t)*.14;if(Math.abs(target-t)<.0008)t=target;render();raf=t!==target?requestAnimationFrame(loop):0}
 function onScroll(){target=readTarget()*STEPS;if(!raf)raf=requestAnimationFrame(loop)}
 addEventListener('scroll',onScroll,{passive:true});addEventListener('resize',onScroll);
-function goTo(k){k=clamp(k,0,STEPS);const top=pin.getBoundingClientRect().top+scrollY;
+function goTo(k){k=clamp(k,0,STEPS);if(mob.matches){mi=k;target=k;if(!raf)raf=requestAnimationFrame(loop);return}const top=pin.getBoundingClientRect().top+scrollY;
  const y=top+(k/STEPS)*range();const reduce=matchMedia('(prefers-reduced-motion:reduce)').matches;
  scrollTo({top:k===STEPS?y+2:y,behavior:reduce?'auto':'smooth'})}
 document.getElementById('sdNext').addEventListener('click',()=>goTo(Math.round(target)+1));
 document.getElementById('sdPrev').addEventListener('click',()=>goTo(Math.round(target)-1));
 sd.addEventListener('keydown',e=>{if(e.key==='ArrowRight')goTo(Math.round(target)+1);if(e.key==='ArrowLeft')goTo(Math.round(target)-1)});
+/* mobile: no scroll-pinning; swipe the deck or use the buttons */
+deck.addEventListener('pointerdown',e=>{if(!mob.matches)return;swx=e.clientX;swMoved=false});
+deck.addEventListener('pointerup',e=>{if(swx===null||!mob.matches){swx=null;return}const dx=e.clientX-swx;swx=null;if(Math.abs(dx)>40){swMoved=true;goTo(Math.round(target)+(dx<0?1:-1))}});
+deck.addEventListener('pointercancel',()=>{swx=null});
+deck.addEventListener('click',e=>{if(swMoved){e.stopPropagation();e.preventDefault();swMoved=false}},true);
+addEventListener('resize',()=>{if(!mob.matches)mi=Math.round(target)});
 target=readTarget()*STEPS;t=target;render();
 new MutationObserver(onScroll).observe(document.body,{attributes:true,subtree:true,attributeFilter:['class']});
 })();
