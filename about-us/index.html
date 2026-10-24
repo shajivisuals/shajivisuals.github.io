@@ -321,6 +321,27 @@ html{scroll-padding-top:100px}
 /* tool logos strip */
 .strip-g .tool{display:flex;align-items:center;gap:14px}
 .strip-g .tool svg{width:clamp(28px,3vw,38px);height:clamp(28px,3vw,38px);flex:none}
+body{overflow-x:clip}
+/* home avatar + voice intro */
+.home-hero>.hero-avatar{position:absolute;right:calc(50% - 50vw + 2vw);bottom:-40px;width:clamp(340px,37vw,760px);aspect-ratio:1050/1008;z-index:0}
+.hero-avatar .av-img{width:100%;height:100%;display:block;-webkit-mask-image:linear-gradient(90deg,transparent,#000 18%,#000 82%,transparent),linear-gradient(0deg,transparent,#000 16%,#000 92%,transparent);-webkit-mask-composite:source-in;mask-image:linear-gradient(90deg,transparent,#000 18%,#000 82%,transparent),linear-gradient(0deg,transparent,#000 16%,#000 92%,transparent);mask-composite:intersect;user-select:none;-webkit-user-drag:none}
+.hero-avatar.speaking .av-img{animation:avtalk 1.1s ease-in-out infinite;filter:drop-shadow(0 0 26px rgba(245,179,1,.32))}
+@keyframes avtalk{50%{transform:translateY(-6px) scale(1.012)}}
+.btn.intro{background:rgba(255,255,255,.06);color:#fff;border:1px solid rgba(245,179,1,.55)}
+.btn.intro .ic{color:#f5b301;font-size:11px}.btn.intro[aria-pressed=true]{background:rgba(245,179,1,.14)}
+.intro-cap{position:absolute;left:3%;right:3%;bottom:6%;z-index:3;display:flex;gap:12px;align-items:flex-start;padding:14px 46px 14px 16px;border:1px solid rgba(245,179,1,.4);border-radius:18px;background:rgba(8,12,34,.94);box-shadow:0 14px 40px rgba(0,0,0,.5);text-align:left;font-size:15px;line-height:1.5;color:#fff}
+.intro-cap[hidden]{display:none}.intro-cap p{margin:0}
+.intro-cap .x{position:absolute;top:8px;right:8px;width:30px;height:30px;border-radius:50%;border:1px solid var(--hair);background:rgba(255,255,255,.08);color:#fff;font-size:16px;line-height:1;cursor:pointer}
+.eq{display:flex;gap:3px;align-items:flex-end;height:18px;margin-top:4px;flex:none}.eq i{width:3px;height:6px;border-radius:2px;background:#f5b301;animation:eq 0.9s ease-in-out infinite}
+.eq i:nth-child(2){animation-delay:.15s}.eq i:nth-child(3){animation-delay:.3s}.eq i:nth-child(4){animation-delay:.45s}
+@keyframes eq{50%{height:18px}}
+@media(prefers-reduced-motion:reduce){.hero-avatar.speaking .av-img,.eq i{animation:none}}
+@media(max-width:1099px){.home-hero>.hero-avatar{position:relative;right:auto;bottom:auto;width:min(440px,92vw);margin:28px auto 0}}
+/* About portrait (same reveal as the old home portrait) */
+.pf-me{--x:50%;--y:50%;--r:0px;position:relative;width:100%;aspect-ratio:720/691;-webkit-mask-image:linear-gradient(#000 70%,transparent);mask-image:linear-gradient(#000 70%,transparent)}
+.pf-me img{position:absolute;inset:0;width:100%;height:100%;user-select:none;-webkit-user-drag:none}
+.pf-me .real{-webkit-mask-image:radial-gradient(circle at var(--x) var(--y),#000 calc(var(--r) - 40px),transparent var(--r));mask-image:radial-gradient(circle at var(--x) var(--y),#000 calc(var(--r) - 40px),transparent var(--r))}
+@media(hover:none){.pf-me .real{-webkit-mask-image:none;mask-image:none}}
 /* smaller About us heading */
 .page[data-p="about-us"]>h1{font-size:clamp(2.2rem,6.4vw,5.6rem)}
 .starpick button:not(.on):hover{color:rgba(255,255,255,.4)}
@@ -362,7 +383,7 @@ html{scroll-padding-top:100px}
 <div class="lb" id="lb" hidden><img alt=""></div>
 <main><section class="page on" data-p="about-us"><h1 class="long">About <em>Sharjeel Ahmad</em></h1>
 <p class="lede one">A quick look at who I am and how I help brands grow through design and marketing.</p>
-<div class="split reveal"><img class="pf" src="https://static.wixstatic.com/media/6ce1f0_c5462e6c90e74ec2977a9f47a91911f1~mv2.jpg/v1/fill/w_495,h_514,al_c,q_80/SnapInsta_edited_edited.jpg" alt="Sharjeel">
+<div class="split reveal"><div class="pf-me me-reveal"><img class="dots" src="sharjeel-hero-dots.webp" alt="Sharjeel Ahmad, graphic designer and Pinterest marketing specialist" width="720" height="691" loading="lazy" decoding="async"><img class="real" src="sharjeel-hero.webp" alt="" aria-hidden="true" width="720" height="691" loading="lazy" decoding="async"></div>
 <div><p>I'm Sharjeel Ahmad, a freelance graphic designer and digital marketer based in Pakistan. I work with brands and small businesses to create visuals that grab attention and campaigns that actually convert. Whether it's a single social media post, a full Pinterest strategy, or a Meta ad campaign, I focus on combining creativity with real results. I believe good design isn't just about looking nice. It's about making people stop scrolling and take action.</p>
 <p>This is where I share a bit about how I work. I specialize in three areas: graphic design for social media, Pinterest marketing to grow organic reach, and Meta ads to turn attention into real leads and sales. I got into this because most small businesses had either great products with weak visuals, or nice designs with no strategy behind them. So I offer both together. What sets me apart is understanding how design and marketing work as one, not two separate things.</p></div></div>
 <div class="resume reveal"><h2>My <em>experience</em></h2>
@@ -488,11 +509,11 @@ $$('.count').forEach(el=>co.observe(el));
 const lb=$('#lb');$$('.res-shot img').forEach(i=>{const open=()=>{lb.querySelector('img').src=i.src;lb.hidden=false};i.addEventListener('click',open);i.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();open()}})});
 })();
 
-(function(){const el=document.getElementById('heroMe');if(!el)return;const rm=matchMedia('(prefers-reduced-motion: reduce)');let r=0,t=0,raf=0;
+(function(){document.querySelectorAll('.me-reveal').forEach(el=>{const rm=matchMedia('(prefers-reduced-motion: reduce)');let r=0,t=0,raf=0;
 const step=()=>{r+=(t-r)*(rm.matches?1:.12);if(Math.abs(t-r)<.5)r=t;el.style.setProperty('--r',r+'px');raf=r!==t?requestAnimationFrame(step):0};
 const go=v=>{t=v;if(!raf)raf=requestAnimationFrame(step)};
 el.addEventListener('pointermove',e=>{if(e.pointerType==='touch')return;const b=el.getBoundingClientRect();el.style.setProperty('--x',(e.clientX-b.left)+'px');el.style.setProperty('--y',(e.clientY-b.top)+'px');go(b.width*.42)});
-el.addEventListener('pointerleave',()=>go(0));})();
+el.addEventListener('pointerleave',()=>go(0));});})();
 </script>
 <script>
 (function(){const sd=document.getElementById('sd'),pin=document.getElementById('sdPin');if(!sd||!pin)return;
@@ -637,6 +658,28 @@ function tick(t){
 }
 requestAnimationFrame(tick);
 if(document.querySelector('#qStage .qc'))init();
+})();
+</script>
+<script>
+/* Voice intro: plays /intro.mp3 if you upload one, otherwise the browser voice; captions show the lines */
+(function(){
+const btn=document.getElementById('introBtn');if(!btn)return;
+const av=document.getElementById('heroAvatar'),cap=document.getElementById('introCap'),capP=cap.querySelector('p'),lbl=btn.querySelector('.introlbl'),ic=btn.querySelector('.ic');
+const LINES=["Hi, I'm Sharjeel Ahmad, the designer behind Shaji Visuals.","I'm a graphic designer and Pinterest marketing specialist.","I design social media creatives, posters and brand visuals, run Pinterest marketing, and set up Meta ads for sales, leads and brand awareness.","Take a look at my work, and let's talk about your project."];
+const synth=window.speechSynthesis;let playing=false,audio=null,timers=[],hasAudio=false,run=0;
+fetch('/intro.mp3',{method:'HEAD'}).then(r=>{hasAudio=r.ok&&/audio|mpeg|octet/i.test(r.headers.get('content-type')||'')}).catch(()=>{});
+const later=(fn,ms)=>timers.push(setTimeout(fn,ms));
+function ui(on){playing=on;av.classList.toggle('speaking',on);btn.setAttribute('aria-pressed',on);lbl.textContent=on?'Stop':'Introduction';ic.textContent=on?'■':'▶'}
+function stop(){run++;timers.forEach(clearTimeout);timers=[];try{synth&&synth.cancel()}catch(e){}if(audio){audio.pause();audio=null}ui(false);cap.hidden=true}
+function finish(){later(()=>{if(playing)stop()},1800);av.classList.remove('speaking')}
+function show(i){capP.textContent=LINES[i]}
+function timed(i,id){/* captions only, paced by reading speed */if(id!==run)return;if(i>=LINES.length){finish();return}show(i);later(()=>timed(i+1,id),Math.max(1800,LINES[i].length*65))}
+function voice(){const v=synth.getVoices().filter(x=>/^en/i.test(x.lang));return v.find(x=>/google uk english male|male|david|guy|mark|daniel|james|ryan/i.test(x.name))||v.find(x=>/en-(us|gb|au|in)/i.test(x.lang))||v[0]}
+function speak(i,id){if(id!==run)return;if(i>=LINES.length){finish();return}show(i);const u=new SpeechSynthesisUtterance(LINES[i]);u.lang='en-US';u.rate=.98;const v=voice();if(v)u.voice=v;let started=false;u.onstart=()=>{started=true};u.onend=()=>speak(i+1,id);u.onerror=()=>timed(i,id);later(()=>{if(id===run&&!started){try{synth.cancel()}catch(e){}timed(i,id)}},2200);synth.speak(u)}
+function startAudio(id){audio=new Audio('/intro.mp3');audio.addEventListener('loadedmetadata',()=>{const total=LINES.join(' ').length;let t=0;LINES.forEach((l,i)=>{later(()=>{if(id===run)show(i)},t/total*audio.duration*1000);t+=l.length+1})});audio.addEventListener('ended',()=>{if(id===run)finish()});audio.addEventListener('error',()=>{if(id===run){audio=null;synth?speak(0,id):timed(0,id)}});audio.play().catch(()=>{if(id===run){audio=null;synth?speak(0,id):timed(0,id)}})}
+btn.addEventListener('click',()=>{if(playing){stop();return}stop();const id=run;ui(true);cap.hidden=false;capP.textContent=LINES[0];if(hasAudio)startAudio(id);else if(synth)speak(0,id);else timed(0,id)});
+cap.querySelector('.x').addEventListener('click',stop);
+addEventListener('pagehide',stop);
 })();
 </script>
 </body></html>
