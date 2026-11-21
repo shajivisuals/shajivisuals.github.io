@@ -241,7 +241,7 @@ html{scroll-padding-top:100px}
 /* hero portrait: dotted look, real photo revealed under cursor */
 .home-hero{position:relative}
 .hero-me{--x:50%;--y:50%;--r:0px;position:absolute;right:calc(50% - 50vw + 2vw);bottom:-40px;width:clamp(340px,37vw,760px);aspect-ratio:720/691;z-index:0;
--webkit-mask-image:linear-gradient(#000 70%,transparent);mask-image:linear-gradient(#000 70%,transparent)}
+-webkit-mask-image:linear-gradient(#000 70%,transparent);mask-image:linear-gradient(#000 72%,transparent)}
 .hero-me img{position:absolute;inset:0;width:100%;height:100%;user-select:none;-webkit-user-drag:none}
 .hero-me .real{-webkit-mask-image:radial-gradient(circle at var(--x) var(--y),#000 calc(var(--r) - 40px),transparent var(--r));mask-image:radial-gradient(circle at var(--x) var(--y),#000 calc(var(--r) - 40px),transparent var(--r))}
 .home-hero>*:not(.hero-me){position:relative;z-index:1}
@@ -359,7 +359,7 @@ body{overflow-x:clip}
 .hero-avatar::before{content:"";position:absolute;right:100%;top:0;bottom:0;width:100vw;background:url(avatar-bg-left.webp) right top/auto 100% no-repeat;-webkit-mask-image:linear-gradient(180deg,transparent,#000 12%,#000 86%,transparent);mask-image:linear-gradient(180deg,transparent,#000 12%,#000 86%,transparent);pointer-events:none}
 }
 /* About portrait (same reveal as the old home portrait) */
-.pf-me{--x:50%;--y:50%;--r:0px;position:relative;width:100%;aspect-ratio:720/691;-webkit-mask-image:linear-gradient(#000 70%,transparent);mask-image:linear-gradient(#000 70%,transparent)}
+.pf-me{--x:50%;--y:50%;--r:0px;position:relative;width:100%;aspect-ratio:720/900;max-width:520px;margin-inline:auto;-webkit-mask-image:linear-gradient(#000 72%,transparent);mask-image:linear-gradient(#000 70%,transparent)}
 .pf-me img{position:absolute;inset:0;width:100%;height:100%;user-select:none;-webkit-user-drag:none}
 .pf-me .real{-webkit-mask-image:radial-gradient(circle at var(--x) var(--y),#000 calc(var(--r) - 40px),transparent var(--r));mask-image:radial-gradient(circle at var(--x) var(--y),#000 calc(var(--r) - 40px),transparent var(--r))}
 @media(hover:none){.pf-me .real{-webkit-mask-image:none;mask-image:none}}
@@ -417,7 +417,7 @@ body{overflow-x:clip}
 <div class="lb" id="lb" hidden><img alt=""></div>
 <main><section class="page on" data-p="about-us"><h1 class="long">About <em>Sharjeel Ahmad</em></h1>
 <p class="lede one">A quick look at who I am and how I help brands grow through design and marketing.</p>
-<div class="split reveal"><div class="pf-me me-reveal"><img class="dots" src="sharjeel-hero-dots.webp" alt="Sharjeel Ahmad, graphic designer and Pinterest marketing specialist" width="720" height="691" loading="lazy" decoding="async"><img class="real" src="sharjeel-hero.webp" alt="" aria-hidden="true" width="720" height="691" loading="lazy" decoding="async"></div>
+<div class="split reveal"><div class="pf-me me-reveal"><img class="dots" src="about-image-dots.webp" alt="Sharjeel Ahmad, graphic designer and Pinterest marketing specialist" width="720" height="900" loading="lazy" decoding="async"><img class="real" src="about-image.webp" alt="" aria-hidden="true" width="720" height="900" loading="lazy" decoding="async"></div>
 <div><p>I'm Sharjeel Ahmad, a freelance graphic designer and digital marketer based in Pakistan. I work with brands and small businesses to create visuals that grab attention and campaigns that actually convert. Whether it's a single social media post, a full Pinterest strategy, or a Meta ad campaign, I focus on combining creativity with real results. I believe good design isn't just about looking nice. It's about making people stop scrolling and take action.</p>
 <p>This is where I share a bit about how I work. I specialize in three areas: graphic design for social media, Pinterest marketing to grow organic reach, and Meta ads to turn attention into real leads and sales. I got into this because most small businesses had either great products with weak visuals, or nice designs with no strategy behind them. So I offer both together. What sets me apart is understanding how design and marketing work as one, not two separate things.</p></div></div>
 <div class="resume reveal"><h2>My <em>experience</em></h2>
