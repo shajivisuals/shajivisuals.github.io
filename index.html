@@ -299,24 +299,20 @@ html{scroll-padding-top:100px}
 .starpick button.on{color:#f5b301;text-shadow:0 0 14px rgba(245,179,1,.45)}
 .starpick button:hover{transform:scale(1.15)}.starpick button:focus-visible{outline:2px solid #8fb0ff;outline-offset:2px;border-radius:6px}
 .article h3{font-size:1.35rem;margin:26px 0 8px;line-height:1.1}
-/* mobile Selected Work: pinned scroll slides, compact so everything fits the screen */
+/* mobile Selected Work: images change only while scrolling (section pins), sized to the screen */
 @media(max-width:879px){
-.sd-stick{align-items:flex-start;padding-top:6px}
-.sd{gap:12px!important;margin:0 auto!important}
-.sd-deck{width:clamp(140px,calc((100svh - 84px - 250px)*.8),250px)!important}
-.sd-text{display:grid;grid-template-columns:auto 1fr;gap:8px 12px;align-items:center}
-.sd-stories{grid-column:1/-1}
-.sd-count{margin:0;order:1}.sd-count b{font-size:1.9rem}
-.sd-ctrl{margin:0;order:2;justify-self:end}
-.sd-btn{width:44px;height:44px}
-.sd-story h3{font-size:1.6rem;margin:6px 0 8px}.sd-story p{font-size:14px;line-height:1.45}
-.sd-more{margin-top:12px;padding:.6em 1.2em}
-}
-@media(max-width:879px){
-.sd-pin{height:auto!important;margin-top:0}
-.sd-stick{position:static!important;height:auto!important;display:block}
-.sd{margin-top:28px!important}
-.sd-deck{width:min(220px,60vw)!important}
+.sd-pin{--nh:var(--navh,80px);--sh:calc(100svh - var(--nh));height:calc(var(--sh) + 5*60svh);margin-top:0}
+.sd-stick{position:sticky;top:var(--nh);height:var(--sh);display:flex;align-items:center;padding:0}
+.sd{width:100%;gap:14px!important;margin:0 auto!important}
+.sd-deck{width:min(64vw,calc((100svh - var(--nh) - 235px)*.8))!important;min-width:120px}
+.sd-text{display:block;text-align:center}
+.sd-stories{justify-items:center}
+.sd-story{align-items:center}
+.sd-count{margin:0 0 4px}.sd-count b{font-size:1.7rem}
+.sd-ctrl{display:none}
+.sd-story h3{font-size:1.5rem;margin:4px 0 6px}
+.sd-story p{font-size:14px;line-height:1.4;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.sd-more{margin-top:10px;padding:.55em 1.2em}
 }
 /* Graphic Design page: each project block snaps under the header */
 html:has(.page.on[data-p="portfolio"]){scroll-snap-type:y proximity}
@@ -759,7 +755,7 @@ if(document.querySelector('#qStage .qc'))init();
 (function(){const fx=document.getElementById('avFx');if(!fx||matchMedia('(prefers-reduced-motion: reduce)').matches)return;(function b(){if(!document.hidden){fx.classList.add('blink');setTimeout(()=>fx.classList.remove('blink'),110)}setTimeout(b,2600+Math.random()*3200)})()})();
 </script>
 <script>
-(function(){const f=()=>document.documentElement.style.setProperty('--navh',((document.querySelector('nav.top')||{}).offsetHeight||84)+'px');f();addEventListener('resize',f)})();
+(function(){const f=()=>document.documentElement.style.setProperty('--navh',((document.querySelector('nav.top')||{}).offsetHeight||84)+'px');f();addEventListener('resize',f);addEventListener('load',f);if(window.ResizeObserver){var n=document.querySelector('nav.top');n&&new ResizeObserver(f).observe(n)}})();
 </script>
 <script>
 /* Image fallback: retry the original Wix file, then a local copy; hide a logo that still fails */

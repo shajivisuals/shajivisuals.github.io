@@ -697,7 +697,7 @@ if(document.querySelector('#qStage .qc'))init();
 (function(){const fx=document.getElementById('avFx');if(!fx||matchMedia('(prefers-reduced-motion: reduce)').matches)return;(function b(){if(!document.hidden){fx.classList.add('blink');setTimeout(()=>fx.classList.remove('blink'),110)}setTimeout(b,2600+Math.random()*3200)})()})();
 </script>
 <script>
-(function(){const f=()=>document.documentElement.style.setProperty('--navh',((document.querySelector('nav.top')||{}).offsetHeight||84)+'px');f();addEventListener('resize',f)})();
+(function(){const f=()=>document.documentElement.style.setProperty('--navh',((document.querySelector('nav.top')||{}).offsetHeight||84)+'px');f();addEventListener('resize',f);addEventListener('load',f);if(window.ResizeObserver){var n=document.querySelector('nav.top');n&&new ResizeObserver(f).observe(n)}})();
 </script>
 <script>
 /* Image fallback: retry the original Wix file, then a local copy; hide a logo that still fails */
