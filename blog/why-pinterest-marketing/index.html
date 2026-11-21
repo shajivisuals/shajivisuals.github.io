@@ -318,6 +318,9 @@ html{scroll-padding-top:100px}
 .sd{margin-top:28px!important}
 .sd-deck{width:min(220px,60vw)!important}
 }
+/* Graphic Design page: each project block snaps under the header */
+html:has(.page.on[data-p="portfolio"]){scroll-snap-type:y proximity}
+#gal>.reveal{scroll-snap-align:start;scroll-margin-top:0}
 /* tool logos strip */
 .strip-g .tool{display:flex;align-items:center;gap:14px}
 .strip-g .tool svg{width:clamp(28px,3vw,38px);height:clamp(28px,3vw,38px);flex:none}
@@ -350,6 +353,11 @@ body{overflow-x:clip}
 @keyframes eq{50%{height:18px}}
 @media(prefers-reduced-motion:reduce){.hero-avatar.speaking .av-stage,.eq i,.av-fx.point .pt-hand{animation:none}}
 @media(max-width:1099px){.home-hero>.hero-avatar{position:relative;right:auto;bottom:auto;width:min(440px,92vw);margin:28px auto 0}}
+@media(min-width:1100px){
+.home-hero>.hero-avatar{right:calc(50% - 50vw);top:-20px;bottom:auto;height:calc(100% + 80px);width:auto;aspect-ratio:1050/1008}
+.hero-avatar .av-img{-webkit-mask-image:linear-gradient(180deg,transparent,#000 12%,#000 86%,transparent);mask-image:linear-gradient(180deg,transparent,#000 12%,#000 86%,transparent);-webkit-mask-composite:source-over;mask-composite:add}
+.hero-avatar::before{content:"";position:absolute;right:100%;top:0;bottom:0;width:100vw;background:url(avatar-bg-left.webp) right top/auto 100% no-repeat;-webkit-mask-image:linear-gradient(180deg,transparent,#000 12%,#000 86%,transparent);mask-image:linear-gradient(180deg,transparent,#000 12%,#000 86%,transparent);pointer-events:none}
+}
 /* About portrait (same reveal as the old home portrait) */
 .pf-me{--x:50%;--y:50%;--r:0px;position:relative;width:100%;aspect-ratio:720/691;-webkit-mask-image:linear-gradient(#000 70%,transparent);mask-image:linear-gradient(#000 70%,transparent)}
 .pf-me img{position:absolute;inset:0;width:100%;height:100%;user-select:none;-webkit-user-drag:none}
@@ -432,15 +440,17 @@ $$('#gal .reveal').forEach(el=>io.observe(el));
 /* 3D ring: cards stand on a circle around the viewer; screen-space gaps are solved so they stay even */
 function ring(el,items,dir){const n=items.length;
 const cards=items.map(x=>{const c=document.createElement('div');c.className='rcard';const im=new Image();im.src=x[0]+'.jpg';im.alt='Design by Shaji visuals';im.draggable=false;c.append(im);el.append(c);return c});
-let W=0,w=0,h=0,T=[0,.3],K=1,slot=200,pos=0,vel=0,paused=false,drag=null,moved=false,last=performance.now();
+let lastIH=0,lastNR=-9,W=0,w=0,h=0,T=[0,.3],K=1,slot=200,pos=0,vel=0,paused=false,drag=null,moved=false,last=performance.now();
 const xl=(f,w)=>(R*Math.sin(f)-w/2*Math.cos(f))*P/(R*Math.cos(f)+w/2*Math.sin(f));
 const xr=(f,w)=>(R*Math.sin(f)+w/2*Math.cos(f))*P/(R*Math.cos(f)-w/2*Math.sin(f));
-function solve(){W=el.clientWidth;if(!W)return;w=Math.max(130,Math.min(250,W<700?W*.48:W*.2));h=w*1.25;
-const t=[0];let pr=xr(0,w);
+function solve(){W=el.clientWidth;if(!W)return;const w0=Math.max(130,Math.min(250,W<700?W*.48:W*.2));
+const run=wv=>{w=wv;h=w*1.25;const t=[0];let pr=xr(0,w);
 for(let k=1;k<=8;k++){let lo=t[k-1],hi=1.3;for(let i=0;i<40;i++){const m=(lo+hi)/2;xl(m,w)<pr+GAP?lo=m:hi=m}const f=(lo+hi)/2;t.push(f);pr=xr(f,w);if(pr>W/2+w*.6)break}
 T=t;K=T.length-1;slot=P*Math.tan(T[1]);
 const ms=Math.max(...T.map(f=>P/(R*Math.cos(f))));
-el.style.height=Math.round(h*Math.max(1,ms)*1.06+24)+'px';
+const rh=Math.round(h*Math.max(1,ms)*1.06+24);el.style.height=rh+'px';return rh};
+let rh=run(w0);const grp=el.parentElement,nonRing=grp.offsetHeight-el.offsetHeight,sp=parseFloat(getComputedStyle(document.documentElement).scrollPaddingTop)||92,maxRing=innerHeight-sp-44-nonRing;
+if(rh>maxRing&&maxRing>120)run(Math.max(90,w0*(maxRing-24)/(rh-24)));
 cards.forEach(c=>{c.style.width=w+'px';c.style.height=h+'px';c.style.marginLeft=-w/2+'px';c.style.marginTop=-h/2+'px'})}
 function ph(u){const a=Math.abs(u),k=Math.min(Math.floor(a),K-1),t=a-k;return Math.min(1.35,T[k]*(1-t)+T[k+1]*t)*Math.sign(u)}
 function render(){const kv=Math.min(K+.5,n/2);
@@ -449,7 +459,7 @@ if(o<=0){c.style.visibility='hidden';return}
 const f=ph(u);c.style.visibility='visible';c.style.opacity=o;c.style.zIndex=50-Math.round(a*4);
 c.style.transform=`translate3d(${R*Math.sin(f)}px,0,${P-R*Math.cos(f)}px) rotateY(${-f}rad)`})}
 function frame(now){const dt=Math.min(.05,(now-last)/1000);last=now;
-if(el.offsetWidth){if(!W||Math.abs(el.clientWidth-W)>1)solve();
+if(el.offsetWidth){const nr=el.parentElement.offsetHeight-el.offsetHeight;if(!W||Math.abs(el.clientWidth-W)>1||innerHeight!==lastIH||Math.abs(nr-lastNR)>1){lastIH=innerHeight;lastNR=nr;solve()}
 if(!drag){if(Math.abs(vel)>.002){pos+=vel*dt;vel*=Math.pow(.06,dt)}else{vel=0;if(!paused&&!reduce)pos+=dir*SPEED*dt}}
 render()}
 requestAnimationFrame(frame)}
@@ -732,5 +742,8 @@ btn.addEventListener('click',()=>{if(playing){stop();return}stop();const id=run;
 cap.querySelector('.x').addEventListener('click',stop);
 addEventListener('pagehide',stop);
 })();
+</script>
+<script>
+(function(){const f=()=>document.documentElement.style.setProperty('--navh',((document.querySelector('nav.top')||{}).offsetHeight||84)+'px');f();addEventListener('resize',f)})();
 </script>
 </body></html>
