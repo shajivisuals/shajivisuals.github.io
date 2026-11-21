@@ -438,7 +438,7 @@ const cards=items.map(x=>{const c=document.createElement('div');c.className='rca
 let lastIH=0,lastNR=-9,W=0,w=0,h=0,T=[0,.3],K=1,slot=200,pos=0,vel=0,paused=false,drag=null,moved=false,last=performance.now();
 const xl=(f,w)=>(R*Math.sin(f)-w/2*Math.cos(f))*P/(R*Math.cos(f)+w/2*Math.sin(f));
 const xr=(f,w)=>(R*Math.sin(f)+w/2*Math.cos(f))*P/(R*Math.cos(f)-w/2*Math.sin(f));
-function solve(){W=el.clientWidth;if(!W)return;const w0=Math.max(130,Math.min(250,W<700?W*.48:W*.2));
+function solve(){W=el.clientWidth;if(!W)return;const w0=Math.max(140,Math.min(290,W<700?W*.52:W*.23));
 const run=wv=>{w=wv;h=w*1.25;const t=[0];let pr=xr(0,w);
 for(let k=1;k<=8;k++){let lo=t[k-1],hi=1.3;for(let i=0;i<40;i++){const m=(lo+hi)/2;xl(m,w)<pr+GAP?lo=m:hi=m}const f=(lo+hi)/2;t.push(f);pr=xr(f,w);if(pr>W/2+w*.6)break}
 T=t;K=T.length-1;slot=P*Math.tan(T[1]);
@@ -684,61 +684,16 @@ if(document.querySelector('#qStage .qc'))init();
 })();
 </script>
 <script>
-/* Voice intro: avatar speaks (lips, blink, points at the logo). Plays /intro.mp4 or /intro.mp3 if you upload one, otherwise the browser voice. */
-(function(){
-const btn=document.getElementById('introBtn');if(!btn)return;
-const av=document.getElementById('heroAvatar'),cap=document.getElementById('introCap'),capP=cap.querySelector('p'),lbl=btn.querySelector('.introlbl'),ic=btn.querySelector('.ic');
-const fxEl=document.getElementById('avFx'),mouth=document.getElementById('avMouth'),stage=document.getElementById('avStage'),vid=document.getElementById('avVideo');
-const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
-const LINES=["Hi, I'm Sharjeel Ahmad, the designer behind Shaji Visuals.","I'm a graphic designer and Pinterest marketing specialist.","I design social media creatives, posters and brand visuals, run Pinterest marketing, and set up Meta ads for sales, leads and brand awareness.","Take a look at my work, and let's talk about your project."];
-const CUE=LINES[0].indexOf('Shaji Visuals'),synth=window.speechSynthesis;
-let playing=false,media=null,timers=[],hasAudio=false,hasVideo=false,run=0,talking=false,an=null,buf=null,raf=0,mo=0,ctx=null;
-const head=(u,re,set)=>fetch(u,{method:'HEAD'}).then(r=>{if(r.ok&&re.test(r.headers.get('content-type')||''))set()}).catch(()=>{});
-head('/intro.mp3',/audio|mpeg|octet/i,()=>hasAudio=true);head('/intro.mp4',/video|mp4|octet/i,()=>hasVideo=true);
-const later=(fn,ms)=>timers.push(setTimeout(fn,ms));
-/* ---- avatar effects ---- */
-function frame(t){
-  if(!talking){mouth.style.opacity=0;mouth.style.transform='scaleY(0)';raf=0;return}
-  let o;
-  if(an){an.getByteTimeDomainData(buf);let q=0;for(let i=0;i<buf.length;i++){const d=(buf[i]-128)/128;q+=d*d}o=Math.min(1,Math.sqrt(q/buf.length)*6)}
-  else{const x=t/1000;o=.15+.85*Math.abs(Math.sin(x*9.4))*(.5+.5*Math.abs(Math.sin(x*2.7)))}
-  mo+=(o-mo)*.55;
-  mouth.style.opacity=mo>.08?1:0;mouth.style.transform='scaleY('+Math.max(.1,mo).toFixed(3)+') scaleX('+(1.12-.3*mo).toFixed(2)+')';
-  raf=requestAnimationFrame(frame)}
-function talk(on){talking=on&&!reduce&&!media_video();if(talking&&!raf)raf=requestAnimationFrame(frame);if(!talking)an=null}
-function media_video(){return media===vid}
-function point(){if(!fxEl||media_video())return;fxEl.classList.remove('point');void fxEl.getBoundingClientRect();fxEl.classList.add('point');later(()=>fxEl.classList.remove('point'),2800)}
-(function blink(){if(fxEl&&!document.hidden&&!reduce){fxEl.classList.add('blink');setTimeout(()=>fxEl.classList.remove('blink'),110)}setTimeout(blink,2600+Math.random()*3200)})();
-/* ---- controls ---- */
-function ui(on){playing=on;av.classList.toggle('speaking',on);btn.setAttribute('aria-pressed',on);lbl.textContent=on?'Stop':'Introduction';ic.textContent=on?'■':'▶';talk(on)}
-function vidOff(){vid.pause();vid.removeAttribute('src');vid.load();vid.hidden=true;stage.style.visibility=''}
-function stop(){run++;timers.forEach(clearTimeout);timers=[];try{synth&&synth.cancel()}catch(e){}if(media){media.pause();if(media===vid)vidOff();media=null}ui(false);fxEl&&fxEl.classList.remove('point');cap.hidden=true}
-function finish(){talk(false);av.classList.remove('speaking');later(()=>{if(playing)stop()},1800)}
-function show(i){capP.textContent=LINES[i]}
-const lineMs=i=>Math.max(1800,LINES[i].length*65);
-function timed(i,id){if(id!==run)return;if(i>=LINES.length){finish();return}show(i);if(i===0&&CUE>0)later(point,lineMs(0)*.8);later(()=>timed(i+1,id),lineMs(i))}
-function voice(){const v=synth.getVoices().filter(x=>/^en/i.test(x.lang));return v.find(x=>/google uk english male|male|david|guy|mark|daniel|james|ryan/i.test(x.name))||v.find(x=>/en-(us|gb|au|in)/i.test(x.lang))||v[0]}
-function speak(i,id){if(id!==run)return;if(i>=LINES.length){finish();return}show(i);const u=new SpeechSynthesisUtterance(LINES[i]);u.lang='en-US';u.rate=.98;const v=voice();if(v)u.voice=v;let started=false,pointed=i!==0;
-  const pt=()=>{if(!pointed){pointed=true;point()}};
-  u.onstart=()=>{started=true;if(i===0)later(pt,lineMs(0)*.82)};u.onboundary=e=>{if(i===0&&CUE>=0&&e.charIndex>=CUE)pt()};
-  u.onend=()=>speak(i+1,id);u.onerror=()=>timed(i,id);
-  later(()=>{if(id===run&&!started){try{synth.cancel()}catch(e){}timed(i,id)}},2200);synth.speak(u)}
-function schedule(dur,id){const total=LINES.join(' ').length;let t=0;LINES.forEach((l,i)=>{later(()=>{if(id===run)show(i)},t/total*dur*1000);t+=l.length+1});if(CUE>=0)later(()=>{if(id===run)point()},CUE/total*dur*1000)}
-function fallback(id){if(id!==run)return;if(media===vid)vidOff();media=null;talk(true);synth?speak(0,id):timed(0,id)}
-function startMedia(el,src,id){media=el;if(el===vid){talk(false);el.src=src;el.hidden=false;stage.style.visibility='hidden'}
-  el.addEventListener('loadedmetadata',()=>{schedule(el.duration,id)},{once:true});
-  el.addEventListener('ended',()=>{if(id===run)finish()});el.addEventListener('error',()=>fallback(id));
-  if(el!==vid){try{ctx=ctx||new (window.AudioContext||window.webkitAudioContext)();const sn=ctx.createMediaElementSource(el),a=ctx.createAnalyser();a.fftSize=256;sn.connect(a);a.connect(ctx.destination);buf=new Uint8Array(a.fftSize);an=a;ctx.resume&&ctx.resume()}catch(e){an=null}}
-  el.play().catch(()=>fallback(id))}
-btn.addEventListener('click',()=>{if(playing){stop();return}stop();const id=run;cap.hidden=false;capP.textContent=LINES[0];
-  if(hasVideo){ui(true);startMedia(vid,'/intro.mp4',id)}
-  else if(hasAudio){ui(true);startMedia(new Audio('/intro.mp3'),'',id)}
-  else{ui(true);synth?speak(0,id):timed(0,id)}});
-cap.querySelector('.x').addEventListener('click',stop);
-addEventListener('pagehide',stop);
-})();
+/* Avatar blink (intro button and voice removed) */
+(function(){const fx=document.getElementById('avFx');if(!fx||matchMedia('(prefers-reduced-motion: reduce)').matches)return;(function b(){if(!document.hidden){fx.classList.add('blink');setTimeout(()=>fx.classList.remove('blink'),110)}setTimeout(b,2600+Math.random()*3200)})()})();
 </script>
 <script>
 (function(){const f=()=>document.documentElement.style.setProperty('--navh',((document.querySelector('nav.top')||{}).offsetHeight||84)+'px');f();addEventListener('resize',f)})();
 </script>
-</body></html>
+<script>
+/* Image fallback: retry the original Wix file, then a local copy; hide a logo that still fails */
+document.addEventListener('error',function(e){var t=e.target;if(!t||t.tagName!=='IMG'||t.dataset.fb==='done')return;var s=t.getAttribute('src')||'';var m=s.match(/^(https:\/\/static\.wixstatic\.com\/media\/[^\/]+)\/v1\//);
+if(t.dataset.fb!=='1'&&m){t.dataset.fb='1';t.src=m[1];return}
+var l=t.dataset.local;if(l&&t.dataset.fb!=='2'){t.dataset.fb='2';t.src=l;return}
+t.dataset.fb='done';if(t.closest('.track')&&!t.closest('.gal'))t.style.display='none'},true);
+</script></body></html>
