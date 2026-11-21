@@ -301,10 +301,11 @@ html{scroll-padding-top:100px}
 .article h3{font-size:1.35rem;margin:26px 0 8px;line-height:1.1}
 /* mobile Selected Work: images change only while scrolling (section pins), sized to the screen */
 @media(max-width:879px){
-.sd-pin{--nh:var(--navh,80px);--sh:calc(100svh - var(--nh));height:calc(var(--sh) + 5*60svh);margin-top:0}
-.sd-stick{position:sticky;top:var(--nh);height:var(--sh);display:flex;align-items:center;padding:0}
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
+.sd-pin{--nh:var(--navh,80px);--sh:calc(100*var(--svh,1svh) - var(--nh));height:calc(var(--sh) + 300*var(--svh,1svh));margin-top:0}
+.sd-stick{position:sticky;top:var(--nh);height:var(--sh);display:flex;align-items:center;padding:0;overflow:hidden}
 .sd{width:100%;gap:14px!important;margin:0 auto!important}
-.sd-deck{width:min(64vw,calc((100svh - var(--nh) - 235px)*.8))!important;min-width:120px}
+.sd-deck{width:var(--dw,min(64vw,calc((100*var(--svh,1svh) - var(--nh) - 235px)*.8)))!important;min-width:110px}
 .sd-text{display:block;text-align:center}
 .sd-stories{justify-items:center}
 .sd-story{align-items:center}
@@ -646,6 +647,19 @@ addEventListener('resize',()=>{if(!unpinned())mi=Math.round(target)});
 target=readTarget()*STEPS;t=target;render();
 new MutationObserver(onScroll).observe(document.body,{attributes:true,subtree:true,attributeFilter:['class']});
 })();
+</script>
+<script>
+/* Android-safe sizing for the pinned Selected Work: stable small-viewport height + deck sized from real text height */
+(function(){const pin=document.getElementById('sdPin');if(!pin)return;const R=document.documentElement,mq=matchMedia('(max-width:879px)');
+let minH=innerHeight,lastW=innerWidth;
+function vh(){if(innerWidth!==lastW){lastW=innerWidth;minH=innerHeight}minH=Math.min(minH,innerHeight);R.style.setProperty('--svh',minH/100+'px')}
+function size(){const dk=document.getElementById('sdDeck'),sd=document.getElementById('sd'),st=pin.firstElementChild;if(!dk||!mq.matches){dk&&dk.style.removeProperty('--dw');return}
+const txt=sd.querySelector('.sd-text');if(!txt)return;const avail=st.clientHeight-txt.offsetHeight-14-24;const w=Math.max(110,Math.min(innerWidth*.64,avail*.8));dk.style.setProperty('--dw',w+'px')}
+function all(){vh();size()}
+vh();addEventListener('resize',all);addEventListener('orientationchange',()=>{minH=1e5;setTimeout(all,300)});addEventListener('load',()=>{all();setTimeout(all,600)});
+if(document.fonts&&document.fonts.ready)document.fonts.ready.then(all);
+if(window.ResizeObserver){const t=pin.querySelector('.sd-text');t&&new ResizeObserver(size).observe(t)}
+all()})();
 </script>
 <script>
 /* Analytics: page views for #/ routes + button/link/form click events (GA4 + Clarity) */
